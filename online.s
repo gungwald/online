@@ -1,11 +1,22 @@
-********************************
-*                              *
-* ONLINE - LISTS ALL VOLUMES   *
-*                              *
-* AUTHOR:  BILL CHATFIELD      *
-* LICENSE: GPL2                *
-*                              *
-********************************
+****************************************************************************
+*                                                                          *
+* ONLINE - Lists all disk volumes connected to the computer                *
+* Copyright (C) 2017,2018  William L. Chatfield <bill_chatfield@yahoo.com> *
+*                                                                          *
+* This program is free software; you can redistribute it and/or modify     *
+* it under the terms of the GNU General Public License as published by     *
+* the Free Software Foundation; either version 2 of the License, or        *
+* (at your option) any later version.                                      **                                                                          *
+* This program is distributed in the hope that it will be useful,          *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+* GNU General Public License for more details.                             *
+*                                                                          *
+* You should have received a copy of the GNU General Public License along  *
+* with this program; if not, write to the Free Software Foundation, Inc.,  *
+* 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
+*                                                                          *
+****************************************************************************
 
                ORG   $2000
                DSK   ONLINE
@@ -88,6 +99,9 @@ DONE           EOM
 ********************************
 
 MAIN
+               PUTS  LICENSE
+               JSR   CROUT
+
                JSR   MLI        ;CALL MACHINE LANGUAGE INTERFACE
                DB    ONLCMD     ;SPECIFY THE ON_LINE SYSTEM CALL
                DA    ONLARGS    ;SPECIFY ADDRESS OF ARGUMENTS
@@ -341,4 +355,11 @@ ERRMSGS        DA    ERR27
                DA    ERR55
                DA    ERR56
                DA    ERR57
-
+*
+* LICENSE
+*
+LICENSE  ASC "Github.com/gungwald/online v1.0.1 GPL2",00
+LICENSE0 ASC "ONLINE v1.0.1",00
+LICENSE1 ASC "Copyright (c) 2017,2018 Bill Chatfield",00
+LICENSE2 ASC "Distributed under the GPLv2",00
+LICENSE3 ASC "https://github.com/gungwald/online",00
