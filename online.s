@@ -40,6 +40,7 @@ MAXREC         EQU   16         ;MAX RECS RETURNED BY ON_LINE
 BUFPTR         EQU   6          ;WILL USE ZERO PAGE 6 & 7
 MSGADR         EQU   8
 RECLEN         EQU   $10        ;THAT'S 16 IN DECIMAL
+CLARG          EQU   6
 
 ********************************
 *                              *
@@ -99,9 +100,30 @@ DONE           EOM
 ********************************
 
 MAIN
-               PUTS  LICENSE
-               JSR   CROUT
+               LDA   CLARG
+               CMP   #'V'
+               BEQ   PUTVERSION
+               CMP   #'L'
+               BEQ   PUTLICENSE
+               JMP   CALLONLINE
 
+PUTVERSION
+               PUTS  VERSION
+               JSR   CROUT
+               RTS
+
+PUTLICENSE
+               PUTS  LICENSE0
+               JSR   CROUT
+               PUTS  LICENSE1
+               JSR   CROUT
+               PUTS  LICENSE2
+               JSR   CROUT
+               PUTS  LICENSE3
+               JSR   CROUT
+               RTS
+
+CALLONLINE
                JSR   MLI        ;CALL MACHINE LANGUAGE INTERFACE
                DB    ONLCMD     ;SPECIFY THE ON_LINE SYSTEM CALL
                DA    ONLARGS    ;SPECIFY ADDRESS OF ARGUMENTS
@@ -327,7 +349,8 @@ UNKECODE       ASC   "UNKNOWN ERROR CODE: ",00
 *
 * ERROR MESSAGES
 *
-ERRCOUNT       DB    8
+ERRCOUNT       DB    9
+ERR03          ASC   "NO DEVICE CONNECTED",00 ;Bug in AppleWin < 1.26.3.0
 ERR27          ASC   "I/O ERROR",00
 ERR28          ASC   "DEVICE NOT CONNECTED",00
 ERR2E          ASC   "DISK SWITCHED: FILE STILL OPEN ON OTHER DISK",00
@@ -339,7 +362,9 @@ ERR57          ASC   "DUPLICATE VOLUME",00
 *
 * ERROR CODE TO MESSAGE TRANSLATION TABLE
 *
-ERRCODES       DB    $27
+ERRCODES
+               DB    $03 ;BASIC code used improperly by AppleWin < 1.26.3
+               DB    $27
                DB    $28
                DB    $2E
                DB    $45
@@ -347,7 +372,9 @@ ERRCODES       DB    $27
                DB    $55
                DB    $56
                DB    $57
-ERRMSGS        DA    ERR27
+ERRMSGS
+               DA    ERR03 ;Bug in AppleWin < 1.26.3.0
+               DA    ERR27
                DA    ERR28
                DA    ERR2E
                DA    ERR45
@@ -358,8 +385,12 @@ ERRMSGS        DA    ERR27
 *
 * LICENSE
 *
-LICENSE  ASC "Github.com/gungwald/online v1.0.1 GPL2",00
-LICENSE0 ASC "ONLINE v1.0.1",00
+LICENSE0 ASC "ONLINE",00
 LICENSE1 ASC "Copyright (c) 2017,2018 Bill Chatfield",00
 LICENSE2 ASC "Distributed under the GPLv2",00
 LICENSE3 ASC "https://github.com/gungwald/online",00
+*
+* VERSION
+*
+VERSION  ASC "ONLINE v1.0.1",00
+
