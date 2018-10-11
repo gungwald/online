@@ -6,13 +6,13 @@ ifeq ($(OS),Windows_NT)
     MERLIN=$(MERLIN_DIR)/Windows/Merlin32
     RM=del /s
 else
-    MERLIN_DIR=/opt/Merlin32_v1.0
+    MERLIN_DIR=$(HOME)/opt/Merlin32_v1.0
     MERLIN_LIB=$(MERLIN_DIR)/Library
-    MERLIN=$(MERLIN_DIR)/Windows/Merlin32
+    MERLIN=$(MERLIN_DIR)/Linux64/Merlin32
     RM=rm -f
 endif
 
-AC=java -jar AppleCommander-1.3.5.14.jar
+AC=java -jar AppleCommander-*.jar
 SRC=online.s
 PGM=ONLINE
 VOL=$(PGM)
