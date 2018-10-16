@@ -16,7 +16,7 @@ See the [releases](https://github.com/gungwald/online/releases) page for a disk 
 
 # Build from Source
 #### Requirements
-* Windows, Mac, or [Linux](http://getfedora.org)
+* Windows, Mac, or [Linux](http://getfedora.org) - all the build tools are supported on all 3 platforms
 * GNU make - to interpret the Makefile and run the build
 * [Merlin32](https://www.brutaldeluxe.fr/products/crossdevtools/merlin/) - to assemble the source code
 * [Javer](http://www.java.com) - to run AppleCommander which builds a disk image
