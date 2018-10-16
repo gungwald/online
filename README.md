@@ -9,7 +9,7 @@
     S6,D2 /ONLINE
 
 # Etymology (which is different from [Entomology](https://en.wikipedia.org/wiki/Entomology))
-It is named after the ProDOS ON_LINE system call that is used to retrieve this information.
+It is named after the ProDOS [ON_LINE](http://www.easy68k.com/paulrsm/6502/PDOS8TRM.HTM#4.4.6) system call that is used to retrieve volume information.
 
 # Download Binary Executable
 See the https://github.com/gungwald/online/releases page for a disk image with a binary version that's ready to run.
