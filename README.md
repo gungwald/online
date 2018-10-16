@@ -13,3 +13,12 @@ It is named after the ProDOS [ON_LINE](http://www.easy68k.com/paulrsm/6502/PDOS8
 
 # Download Binary Executable
 See the https://github.com/gungwald/online/releases page for a disk image with a binary version that's ready to run.
+
+# Build from Source
+#### Requirements
+* Windows, Mac, or [Linux](http://get.fedora.org)
+* GNU make - to interpret the Makefile and run the build
+* [Merlin32](https://www.brutaldeluxe.fr/products/crossdevtools/merlin/) - to assemble the source code
+* [Javer](http://www.java.com) - to run AppleCommander which builds a disk image
+#### Process
+Type "make".
