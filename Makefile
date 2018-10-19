@@ -32,7 +32,8 @@ $(DSK): $(PGM)
 	$(COPY) $(BASE_DSK) $(DSK)
 	$(AC) -n $(DSK) $(VOL)
 	$(AC) -p $(DSK) $(PGM) SYS < $(PGM)
-	cat $(PGM).VER.bas | tr '\n' '\r' | $(AC) -p $(DSK) $(PGM).VER TXT
+	#cat $(PGM).VER.bas | tr '\n' '\r' | $(AC) -p $(DSK) $(PGM).VER TXT
+	$(AC) -p $(DSK) $(PGM).VER TXT
 
 $(PGM): $(SRC)
 	$(MERLIN) $(MERLIN_LIB) $(SRC)

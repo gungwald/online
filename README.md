@@ -8,6 +8,8 @@
     S6,D1 (NOT A PRODOS DISK)
     S6,D2 /ONLINE
 
+![Example](online-example-run.png)
+
 # Etymology (which is different from [Entomology](https://en.wikipedia.org/wiki/Entomology))
 It is named after the ProDOS [ON_LINE](http://www.easy68k.com/paulrsm/6502/PDOS8TRM.HTM#4.4.6) system call that is used to retrieve volume information.
 
