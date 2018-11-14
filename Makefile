@@ -1,22 +1,34 @@
-# Compiles with https://www.brutaldeluxe.fr/products/crossdevtools/merlin/
+# Require-mints:
+#
+#    GNU make 
+#        - To execute this make file
+#
+#    merlin32
+#        - to assemble the source code
+#          https://www.brutaldeluxe.fr/products/crossdevtools/merlin/
+#
+#    AppleCommander (included) 
+#        - To create the Apple II disk image
+#
+#    AppleWin
+#        - To load the disk and test the program
 #
 ifeq ($(OS),Windows_NT)
     MERLIN_DIR=C:/opt/Merlin32_v1.0
     MERLIN_LIB=$(MERLIN_DIR)/Library
     MERLIN=$(MERLIN_DIR)/Windows/Merlin32
-    RM=del /s
     COPY=copy
     APPLEWIN="c:\opt\AppleWin1.26.2.3\applewin.exe"
 else
-    MERLIN_DIR=$(HOME)/opt/Merlin32_v1.0
-    MERLIN_LIB=$(MERLIN_DIR)/Library
-    MERLIN=$(MERLIN_DIR)/Linux64/Merlin32
-    RM=rm -f
+    MERLIN_LIB=/usr/local/share/merlin32/asminc
+    MERLIN=merlin32
     COPY=cp
     APPLEWIN=applewin
 endif
 
-AC=java -jar AppleCommander-ac-1.4.0.jar
+# It is necessary to use this older version of AppleCommander to support
+# the PowerBook G4 and iBook G3. This version only requires Java 1.3.
+AC=java -jar AppleCommander-1.3.5-ac.jar
 SRC=online.s
 PGM=online
 BASE_DSK=prodos-2.0.3-boot.dsk
