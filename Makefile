@@ -20,11 +20,14 @@ ifeq ($(OS),Windows_NT)
     COPY=copy
     APPLEWIN="c:\opt\AppleWin1.26.2.3\applewin.exe"
 else
-    MERLIN_LIB=/usr/local/share/merlin32/asminc
-    MERLIN=merlin32
+    MERLIN_PREFIX=/usr/local
+    MERLIN_LIB=$(MERLIN_PREFIX)/share/merlin32/asminc
+    MERLIN=$(MERLIN_PREFIX)/bin/merlin32
     COPY=cp
     APPLEWIN=applewin
 endif
+
+MERLIN_URL=https://www.brutaldeluxe.fr/products/crossdevtools/merlin/Merlin32_v1.0.zip
 
 # It is necessary to use this older version of AppleCommander to support
 # the PowerBook G4 and iBook G3. This version only requires Java 1.3.
@@ -42,16 +45,41 @@ DSK=$(PGM).dsk
 
 $(DSK): $(PGM)
 	$(COPY) $(BASE_DSK) $(DSK)
-	$(AC) -n $(DSK) $(VOL)
+	# Does not work on older AC
+	#$(AC) -n $(DSK) $(VOL)
 	$(AC) -p $(DSK) $(PGM) SYS < $(PGM)
-	#cat $(PGM).VER.bas | tr '\n' '\r' | $(AC) -p $(DSK) $(PGM).VER TXT
-	$(AC) -p $(DSK) $(PGM).VER TXT
+	cat $(PGM).VER.bas | tr '\n' '\r' | $(AC) -p $(DSK) $(PGM).VER TXT
 
-$(PGM): $(SRC)
+$(PGM): $(SRC) $(MERLIN) $(MERLIN_LIB)
 	$(MERLIN) $(MERLIN_LIB) $(SRC)
 
+$(MERLIN): Merlin32_v1.0/Source/Merlin32
+	( cd Merlin32_v1.0/Source; \
+	sudo install Merlin32 $(MERLIN) )
+
+$(MERLIN_LIB): Merlin32_v1.0
+	sudo install -d $(MERLIN_LIB)
+	( cd Merlin32_v1.0; \
+	sudo install Library/* $(MERLIN_LIB) )
+
+Merlin32_v1.0/Source/Merlin32: Merlin32_v1.0
+	( cd Merlin32_v1.0/Source; \
+	make -f linux_makefile )
+
+Merlin32_v1.0: Merlin32_v1.0.zip
+	unzip Merlin32_v1.0.zip
+	
+Merlin32_v1.0.zip:
+	if java -jar jget.jar $(MERLIN_URL); then \
+		echo Download successful; \
+	else \
+		jget.jar failed. Retrying with curl.; \
+		curl --remote-name $(MERLIN_URL); \
+	fi
+
 clean:
-	$(RM) $(DSK) $(PGM)
+	$(RM) $(DSK) $(PGM) *.zip _FileInformation.txt
+	$(RM) -r Merlin32_v1.0 
 
 test: $(DSK)
 	$(APPLEWIN) -d1 $(DSK)

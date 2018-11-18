@@ -1,0 +1,575 @@
+------+--------------------+-------------+----+---------+------+-----------------------+-------------------------------------------------------------------
+ Line | # File        Line | Line Type   | MX |  Reloc  | Size | Address   Object Code |  Source Code                                                      
+------+--------------------+-------------+----+---------+------+-----------------------+-------------------------------------------------------------------
+    1 |  1 online.s      1 | Comment     | 11 |         |    0 | 00/8000               | ****************************************************************************
+    2 |  1 online.s      2 | Comment     | 11 |         |    0 | 00/8000               | *                                                                          *
+    3 |  1 online.s      3 | Comment     | 11 |         |    0 | 00/8000               | * ONLINE - Lists all disk volumes connected to the computer                *
+    4 |  1 online.s      4 | Comment     | 11 |         |    0 | 00/8000               | * Copyright (C) 2017,2018  William L. Chatfield <bill_chatfield@yahoo.com> *
+    5 |  1 online.s      5 | Comment     | 11 |         |    0 | 00/8000               | *                                                                          *
+    6 |  1 online.s      6 | Comment     | 11 |         |    0 | 00/8000               | * This program is free software; you can redistribute it and/or modify     *
+    7 |  1 online.s      7 | Comment     | 11 |         |    0 | 00/8000               | * it under the terms of the GNU General Public License as published by     *
+    8 |  1 online.s      8 | Comment     | 11 |         |    0 | 00/8000               | * the Free Software Foundation; either version 2 of the License, or        *
+    9 |  1 online.s      9 | Comment     | 11 |         |    0 | 00/8000               | * (at your option) any later version.                                      **                                                                          *
+   10 |  1 online.s     10 | Comment     | 11 |         |    0 | 00/8000               | * This program is distributed in the hope that it will be useful,          *
+   11 |  1 online.s     11 | Comment     | 11 |         |    0 | 00/8000               | * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+   12 |  1 online.s     12 | Comment     | 11 |         |    0 | 00/8000               | * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
+   13 |  1 online.s     13 | Comment     | 11 |         |    0 | 00/8000               | * GNU General Public License for more details.                             *
+   14 |  1 online.s     14 | Comment     | 11 |         |    0 | 00/8000               | *                                                                          *
+   15 |  1 online.s     15 | Comment     | 11 |         |    0 | 00/8000               | * You should have received a copy of the GNU General Public License along  *
+   16 |  1 online.s     16 | Comment     | 11 |         |    0 | 00/8000               | * with this program; if not, write to the Free Software Foundation, Inc.,  *
+   17 |  1 online.s     17 | Comment     | 11 |         |    0 | 00/8000               | * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.              *
+   18 |  1 online.s     18 | Comment     | 11 |         |    0 | 00/8000               | *                                                                          *
+   19 |  1 online.s     19 | Comment     | 11 |         |    0 | 00/8000               | ****************************************************************************
+   20 |  1 online.s     20 | Empty       | 11 |         |    0 | 00/8000               |                                        
+   21 |  1 online.s     21 | Directive   | 11 |         |    0 | 00/8000               |             ORG   $2000                
+   22 |  1 online.s     22 | Directive   | 11 |         |    0 | 00/2000               |             DSK   online               
+   23 |  1 online.s     23 | Directive   | 11 |         |    0 | 00/2000               |             TYP   $FF                  ;SYSTEM TYPE
+   24 |  1 online.s     24 | Empty       | 11 |         |    0 | 00/2000               |                                        
+   25 |  1 online.s     25 | Comment     | 11 |         |    0 | 00/2000               | ********************************
+   26 |  1 online.s     26 | Comment     | 11 |         |    0 | 00/2000               | *                              *
+   27 |  1 online.s     27 | Comment     | 11 |         |    0 | 00/2000               | * CONSTANTS                    *
+   28 |  1 online.s     28 | Comment     | 11 |         |    0 | 00/2000               | *                              *
+   29 |  1 online.s     29 | Comment     | 11 |         |    0 | 00/2000               | ********************************
+   30 |  1 online.s     30 | Empty       | 11 |         |    0 | 00/2000               |                                        
+   31 |  1 online.s     31 | Equivalence | 11 |         |    0 | 00/2000               | DEBUG       EQU   0                    
+   32 |  1 online.s     32 | Equivalence | 11 |         |    0 | 00/2000               | ONLCMD      EQU   $C5                  ;ID FOR ON_LINE MLI SYSTEM CALL
+   33 |  1 online.s     33 | Equivalence | 11 |         |    0 | 00/2000               | RDKEY       EQU   $FD0C                ;READS 1 CHAR
+   34 |  1 online.s     34 | Equivalence | 11 |         |    0 | 00/2000               | CROUT       EQU   $FD8E                ;SUB TO OUTPUT CARRIAGE RETURN
+   35 |  1 online.s     35 | Equivalence | 11 |         |    0 | 00/2000               | COUT        EQU   $FDED                ;SUB TO OUTPUT A CHARACTER
+   36 |  1 online.s     36 | Equivalence | 11 |         |    0 | 00/2000               | PRBYTE      EQU   $FDDA                ;SUB TO PRINT ERROR MESSAGE
+   37 |  1 online.s     37 | Equivalence | 11 |         |    0 | 00/2000               | MLI         EQU   $BF00                ;ADDRESS OF MLI ENTRY POINT
+   38 |  1 online.s     38 | Equivalence | 11 |         |    0 | 00/2000               | BELL        EQU   $FF3A                ;SUBROUTINE TO BEEP
+   39 |  1 online.s     39 | Equivalence | 11 |         |    0 | 00/2000               | MAXREC      EQU   16                   ;MAX RECS RETURNED BY ON_LINE
+   40 |  1 online.s     40 | Equivalence | 11 |         |    0 | 00/2000               | BUFPTR      EQU   6                    ;WILL USE ZERO PAGE 6 & 7
+   41 |  1 online.s     41 | Equivalence | 11 |         |    0 | 00/2000               | MSGADR      EQU   8                    
+   42 |  1 online.s     42 | Equivalence | 11 |         |    0 | 00/2000               | RECLEN      EQU   $10                  ;THAT'S 16 IN DECIMAL
+   43 |  1 online.s     43 | Equivalence | 11 |         |    0 | 00/2000               | CLARG       EQU   6                    
+   44 |  1 online.s     44 | Empty       | 11 |         |    0 | 00/2000               |                                        
+   45 |  1 online.s     45 | Comment     | 11 |         |    0 | 00/2000               | ********************************
+   46 |  1 online.s     46 | Comment     | 11 |         |    0 | 00/2000               | *                              *
+   47 |  1 online.s     47 | Comment     | 11 |         |    0 | 00/2000               | * MACROS                       *
+   48 |  1 online.s     48 | Comment     | 11 |         |    0 | 00/2000               | *                              *
+   49 |  1 online.s     49 | Comment     | 11 |         |    0 | 00/2000               | ********************************
+   50 |  1 online.s     50 | Empty       | 11 |         |    0 | 00/2000               |                                        
+   51 |  1 online.s     51 | Directive   | 11 |         |    0 | 00/2000               |             DO    0                    ;TURN OFF ASSEMBLY FOR MACROS
+   52 |  1 online.s     94 | Directive   | 11 |         |    0 | 00/2000               |             FIN                        ;END OF MACROS
+   53 |  1 online.s     95 | Empty       | 11 |         |    0 | 00/2000               |                                        
+   54 |  1 online.s     96 | Comment     | 11 |         |    0 | 00/2000               | ********************************
+   55 |  1 online.s     97 | Comment     | 11 |         |    0 | 00/2000               | *                              *
+   56 |  1 online.s     98 | Comment     | 11 |         |    0 | 00/2000               | * MAIN                         *
+   57 |  1 online.s     99 | Comment     | 11 |         |    0 | 00/2000               | *                              *
+   58 |  1 online.s    100 | Comment     | 11 |         |    0 | 00/2000               | ********************************
+   59 |  1 online.s    101 | Empty       | 11 |         |    0 | 00/2000               |                                        
+   60 |  1 online.s    102 | Empty       | 11 |         |    0 | 00/2000               | MAIN                                   
+   61 |  1 online.s    103 | Code        | 11 |         |    2 | 00/2000 : A5 06       |             LDA   {6}                  
+   62 |  1 online.s    104 | Code        | 11 |         |    2 | 00/2002 : C9 56       |             CMP   #'V'                 
+   63 |  1 online.s    105 | Code        | 11 |         |    2 | 00/2004 : F0 07       |             BEQ   PUTVERSION           
+   64 |  1 online.s    106 | Code        | 11 |         |    2 | 00/2006 : C9 4C       |             CMP   #'L'                 
+   65 |  1 online.s    107 | Code        | 11 |         |    2 | 00/2008 : F0 1B       |             BEQ   PUTLICENSE           
+   66 |  1 online.s    108 | Code        | 11 |         |    3 | 00/200A : 4C 82 20    |             JMP   CALLONLINE           
+   67 |  1 online.s    109 | Empty       | 11 |         |    0 | 00/200D               |                                        
+   68 |  1 online.s    110 | Empty       | 11 |         |    0 | 00/200D               | PUTVERSION                             
+   69 |  1 online.s    111 | Macro       | 11 |         |    0 | 00/200D               |             PUTS  VERSION              
+   70 |  1 online.s    111 | Code        | 11 |         |    1 | 00/200D : 98          |             TYA                        ;PRESERVE Y
+   71 |  1 online.s    111 | Code        | 11 |         |    1 | 00/200E : 48          |             PHA                        
+   72 |  1 online.s    111 | Code        | 11 |         |    2 | 00/200F : A0 00       |             LDY   #0                   ;PREPARE LOOP INDEX
+   73 |  1 online.s    111 | Code        | 11 |         |    3 | 00/2011 : B9 4F 24    | ozunid_2    LDA   VERSION,Y            ;LOAD A CHARACTER
+   74 |  1 online.s    111 | Code        | 11 |         |    2 | 00/2014 : C9 00       |             CMP   #0                   ;CHECK FOR END OF STRING
+   75 |  1 online.s    111 | Code        | 11 |         |    2 | 00/2016 : F0 07       |             BEQ   ozunid_3             
+   76 |  1 online.s    111 | Code        | 11 |         |    3 | 00/2018 : 20 ED FD    |             JSR   {$FDED}              
+   77 |  1 online.s    111 | Code        | 11 |         |    1 | 00/201B : C8          |             INY                        
+   78 |  1 online.s    111 | Code        | 11 |         |    3 | 00/201C : 4C 11 20    |             JMP   ozunid_2             
+   79 |  1 online.s    111 | Code        | 11 |         |    1 | 00/201F : 68          | ozunid_3    PLA                        ;RESTORE Y
+   80 |  1 online.s    111 | Code        | 11 |         |    1 | 00/2020 : A8          |             TAY                        
+   81 |  1 online.s    112 | Code        | 11 |         |    3 | 00/2021 : 20 8E FD    |             JSR   {$FD8E}              
+   82 |  1 online.s    113 | Code        | 11 |         |    1 | 00/2024 : 60          |             RTS                        
+   83 |  1 online.s    114 | Empty       | 11 |         |    0 | 00/2025               |                                        
+   84 |  1 online.s    115 | Empty       | 11 |         |    0 | 00/2025               | PUTLICENSE                             
+   85 |  1 online.s    116 | Macro       | 11 |         |    0 | 00/2025               |             PUTS  LICENSE0             
+   86 |  1 online.s    116 | Code        | 11 |         |    1 | 00/2025 : 98          |             TYA                        ;PRESERVE Y
+   87 |  1 online.s    116 | Code        | 11 |         |    1 | 00/2026 : 48          |             PHA                        
+   88 |  1 online.s    116 | Code        | 11 |         |    2 | 00/2027 : A0 00       |             LDY   #0                   ;PREPARE LOOP INDEX
+   89 |  1 online.s    116 | Code        | 11 |         |    3 | 00/2029 : B9 E2 23    | ozunid_4    LDA   LICENSE0,Y           ;LOAD A CHARACTER
+   90 |  1 online.s    116 | Code        | 11 |         |    2 | 00/202C : C9 00       |             CMP   #0                   ;CHECK FOR END OF STRING
+   91 |  1 online.s    116 | Code        | 11 |         |    2 | 00/202E : F0 07       |             BEQ   ozunid_5             
+   92 |  1 online.s    116 | Code        | 11 |         |    3 | 00/2030 : 20 ED FD    |             JSR   {$FDED}              
+   93 |  1 online.s    116 | Code        | 11 |         |    1 | 00/2033 : C8          |             INY                        
+   94 |  1 online.s    116 | Code        | 11 |         |    3 | 00/2034 : 4C 29 20    |             JMP   ozunid_4             
+   95 |  1 online.s    116 | Code        | 11 |         |    1 | 00/2037 : 68          | ozunid_5    PLA                        ;RESTORE Y
+   96 |  1 online.s    116 | Code        | 11 |         |    1 | 00/2038 : A8          |             TAY                        
+   97 |  1 online.s    117 | Code        | 11 |         |    3 | 00/2039 : 20 8E FD    |             JSR   {$FD8E}              
+   98 |  1 online.s    118 | Macro       | 11 |         |    0 | 00/203C               |             PUTS  LICENSE1             
+   99 |  1 online.s    118 | Code        | 11 |         |    1 | 00/203C : 98          |             TYA                        ;PRESERVE Y
+  100 |  1 online.s    118 | Code        | 11 |         |    1 | 00/203D : 48          |             PHA                        
+  101 |  1 online.s    118 | Code        | 11 |         |    2 | 00/203E : A0 00       |             LDY   #0                   ;PREPARE LOOP INDEX
+  102 |  1 online.s    118 | Code        | 11 |         |    3 | 00/2040 : B9 E9 23    | ozunid_6    LDA   LICENSE1,Y           ;LOAD A CHARACTER
+  103 |  1 online.s    118 | Code        | 11 |         |    2 | 00/2043 : C9 00       |             CMP   #0                   ;CHECK FOR END OF STRING
+  104 |  1 online.s    118 | Code        | 11 |         |    2 | 00/2045 : F0 07       |             BEQ   ozunid_7             
+  105 |  1 online.s    118 | Code        | 11 |         |    3 | 00/2047 : 20 ED FD    |             JSR   {$FDED}              
+  106 |  1 online.s    118 | Code        | 11 |         |    1 | 00/204A : C8          |             INY                        
+  107 |  1 online.s    118 | Code        | 11 |         |    3 | 00/204B : 4C 40 20    |             JMP   ozunid_6             
+  108 |  1 online.s    118 | Code        | 11 |         |    1 | 00/204E : 68          | ozunid_7    PLA                        ;RESTORE Y
+  109 |  1 online.s    118 | Code        | 11 |         |    1 | 00/204F : A8          |             TAY                        
+  110 |  1 online.s    119 | Code        | 11 |         |    3 | 00/2050 : 20 8E FD    |             JSR   {$FD8E}              
+  111 |  1 online.s    120 | Macro       | 11 |         |    0 | 00/2053               |             PUTS  LICENSE2             
+  112 |  1 online.s    120 | Code        | 11 |         |    1 | 00/2053 : 98          |             TYA                        ;PRESERVE Y
+  113 |  1 online.s    120 | Code        | 11 |         |    1 | 00/2054 : 48          |             PHA                        
+  114 |  1 online.s    120 | Code        | 11 |         |    2 | 00/2055 : A0 00       |             LDY   #0                   ;PREPARE LOOP INDEX
+  115 |  1 online.s    120 | Code        | 11 |         |    3 | 00/2057 : B9 10 24    | ozunid_8    LDA   LICENSE2,Y           ;LOAD A CHARACTER
+  116 |  1 online.s    120 | Code        | 11 |         |    2 | 00/205A : C9 00       |             CMP   #0                   ;CHECK FOR END OF STRING
+  117 |  1 online.s    120 | Code        | 11 |         |    2 | 00/205C : F0 07       |             BEQ   ozunid_9             
+  118 |  1 online.s    120 | Code        | 11 |         |    3 | 00/205E : 20 ED FD    |             JSR   {$FDED}              
+  119 |  1 online.s    120 | Code        | 11 |         |    1 | 00/2061 : C8          |             INY                        
+  120 |  1 online.s    120 | Code        | 11 |         |    3 | 00/2062 : 4C 57 20    |             JMP   ozunid_8             
+  121 |  1 online.s    120 | Code        | 11 |         |    1 | 00/2065 : 68          | ozunid_9    PLA                        ;RESTORE Y
+  122 |  1 online.s    120 | Code        | 11 |         |    1 | 00/2066 : A8          |             TAY                        
+  123 |  1 online.s    121 | Code        | 11 |         |    3 | 00/2067 : 20 8E FD    |             JSR   {$FD8E}              
+  124 |  1 online.s    122 | Macro       | 11 |         |    0 | 00/206A               |             PUTS  LICENSE3             
+  125 |  1 online.s    122 | Code        | 11 |         |    1 | 00/206A : 98          |             TYA                        ;PRESERVE Y
+  126 |  1 online.s    122 | Code        | 11 |         |    1 | 00/206B : 48          |             PHA                        
+  127 |  1 online.s    122 | Code        | 11 |         |    2 | 00/206C : A0 00       |             LDY   #0                   ;PREPARE LOOP INDEX
+  128 |  1 online.s    122 | Code        | 11 |         |    3 | 00/206E : B9 2C 24    | ozunid_10   LDA   LICENSE3,Y           ;LOAD A CHARACTER
+  129 |  1 online.s    122 | Code        | 11 |         |    2 | 00/2071 : C9 00       |             CMP   #0                   ;CHECK FOR END OF STRING
+  130 |  1 online.s    122 | Code        | 11 |         |    2 | 00/2073 : F0 07       |             BEQ   ozunid_11            
+  131 |  1 online.s    122 | Code        | 11 |         |    3 | 00/2075 : 20 ED FD    |             JSR   {$FDED}              
+  132 |  1 online.s    122 | Code        | 11 |         |    1 | 00/2078 : C8          |             INY                        
+  133 |  1 online.s    122 | Code        | 11 |         |    3 | 00/2079 : 4C 6E 20    |             JMP   ozunid_10            
+  134 |  1 online.s    122 | Code        | 11 |         |    1 | 00/207C : 68          | ozunid_11   PLA                        ;RESTORE Y
+  135 |  1 online.s    122 | Code        | 11 |         |    1 | 00/207D : A8          |             TAY                        
+  136 |  1 online.s    123 | Code        | 11 |         |    3 | 00/207E : 20 8E FD    |             JSR   {$FD8E}              
+  137 |  1 online.s    124 | Code        | 11 |         |    1 | 00/2081 : 60          |             RTS                        
+  138 |  1 online.s    125 | Empty       | 11 |         |    0 | 00/2082               |                                        
+  139 |  1 online.s    126 | Empty       | 11 |         |    0 | 00/2082               | CALLONLINE                             
+  140 |  1 online.s    127 | Code        | 11 |         |    3 | 00/2082 : 20 00 BF    |             JSR   {$BF00}              ;CALL MACHINE LANGUAGE INTERFACE
+  141 |  1 online.s    128 | Data        | 11 |         |    1 | 00/2085 : C5          |             DB    {$C5}                ;SPECIFY THE ON_LINE SYSTEM CALL
+  142 |  1 online.s    129 | Data        | 11 |         |    2 | 00/2086 : A9 22       |             DA    ONLARGS              ;SPECIFY ADDRESS OF ARGUMENTS
+  143 |  1 online.s    130 | Code        | 11 |         |    2 | 00/2088 : F0 03       |             BEQ   CONTINUE             ;ON_LINE RETURNS 0 ON SUCCESS
+  144 |  1 online.s    131 | Code        | 11 |         |    3 | 00/208A : 4C 38 21    |             JMP   ERROR                
+  145 |  1 online.s    132 | Comment     | 11 |         |    0 | 00/208D               | *
+  146 |  1 online.s    133 | Comment     | 11 |         |    0 | 00/208D               | * COPY THE ADDRESS OF THE OUTPUT BUFFER INTO BUFPTR
+  147 |  1 online.s    134 | Comment     | 11 |         |    0 | 00/208D               | *
+  148 |  1 online.s    135 | Code        | 11 |         |    2 | 00/208D : A9 A9       | CONTINUE    LDA   #<BUFFER             ;PUT LOW BYTE INTO ACCUMULATOR
+  149 |  1 online.s    136 | Code        | 11 |         |    2 | 00/208F : 85 06       |             STA   {6}                  ;ASSIGN LOW BYTE TO BUFPTR
+  150 |  1 online.s    137 | Code        | 11 |         |    2 | 00/2091 : A9 21       |             LDA   #>BUFFER             ;PUT HIGH BYTE INTO ACCUMULATOR
+  151 |  1 online.s    138 | Code        | 11 |         |    2 | 00/2093 : 85 07       |             STA   {6}+1                ;ASSIGN HIGH BYTE TO BUFPTR
+  152 |  1 online.s    139 | Comment     | 11 |         |    0 | 00/2095               | *
+  153 |  1 online.s    140 | Comment     | 11 |         |    0 | 00/2095               | * LOOP TO PROCESS 16 RECORDS
+  154 |  1 online.s    141 | Comment     | 11 |         |    0 | 00/2095               | *
+  155 |  1 online.s    142 | Code        | 11 |         |    3 | 00/2095 : AD B0 22    | RECLOOP     LDA   RECNUM               
+  156 |  1 online.s    143 | Code        | 11 |         |    2 | 00/2098 : C9 10       |             CMP   #{16}                
+  157 |  1 online.s    144 | Code        | 11 |         |    2 | 00/209A : D0 03       |             BNE   _CHKLAST             
+  158 |  1 online.s    145 | Code        | 11 |         |    3 | 00/209C : 4C 37 21    |             JMP   ENDPROG              
+  159 |  1 online.s    146 | Code        | 11 |         |    2 | 00/209F : A0 00       | _CHKLAST    LDY   #0                   
+  160 |  1 online.s    147 | Code        | 11 |         |    2 | 00/20A1 : B1 06       |             LDA   ({6}),Y              
+  161 |  1 online.s    148 | Code        | 11 |         |    2 | 00/20A3 : C9 00       |             CMP   #0                   ;LAST REC IF FIRST BYTE IS 0
+  162 |  1 online.s    149 | Code        | 11 |         |    2 | 00/20A5 : D0 03       |             BNE   FINDDRV              
+  163 |  1 online.s    150 | Code        | 11 |         |    3 | 00/20A7 : 4C 37 21    |             JMP   ENDPROG              
+  164 |  1 online.s    151 | Empty       | 11 |         |    0 | 00/20AA               |                                        
+  165 |  1 online.s    152 | Comment     | 11 |         |    0 | 00/20AA               | * FIND DRIVE NUMBER. IT IS SPECIFIED BY THE HIGH BIT OF
+  166 |  1 online.s    153 | Comment     | 11 |         |    0 | 00/20AA               | * THE FIRST BYTE IN THE RECORD. A ZERO SPECIFIES DRIVE 1.
+  167 |  1 online.s    154 | Comment     | 11 |         |    0 | 00/20AA               | * A ONE SPECIFIES DRIVE 2.
+  168 |  1 online.s    155 | Empty       | 11 |         |    0 | 00/20AA               |                                        
+  169 |  1 online.s    156 | Code        | 11 |         |    2 | 00/20AA : A0 00       | FINDDRV     LDY   #0                   ;SETUP FOR LDA INDIRECT INDEXED
+  170 |  1 online.s    157 | Code        | 11 |         |    2 | 00/20AC : B1 06       |             LDA   ({6}),Y              ;LOAD FIRST BYTE INTO ACCUM
+  171 |  1 online.s    158 | Code        | 11 |         |    2 | 00/20AE : 29 80       |             AND   #%10000000           ;FOCUS ON THE HIGH BIT
+  172 |  1 online.s    159 | Code        | 11 |         |    1 | 00/20B0 : 18          |             CLC                        ;DON'T LET THE CARRY BIT WRAP
+  173 |  1 online.s    160 | Code        | 11 |         |    1 | 00/20B1 : 4A          |             LSR                        ;SHIFT BITS TO THE RIGHT
+  174 |  1 online.s    161 | Code        | 11 |         |    1 | 00/20B2 : 4A          |             LSR                        ;AGAIN
+  175 |  1 online.s    162 | Code        | 11 |         |    1 | 00/20B3 : 4A          |             LSR                        ;AGAIN
+  176 |  1 online.s    163 | Code        | 11 |         |    1 | 00/20B4 : 4A          |             LSR                        ;...
+  177 |  1 online.s    164 | Code        | 11 |         |    1 | 00/20B5 : 4A          |             LSR                        
+  178 |  1 online.s    165 | Code        | 11 |         |    1 | 00/20B6 : 4A          |             LSR                        
+  179 |  1 online.s    166 | Code        | 11 |         |    1 | 00/20B7 : 4A          |             LSR                        ;BIT ZERO NOW SPECIFIES DRIVE
+  180 |  1 online.s    167 | Code        | 11 |         |    2 | 00/20B8 : 69 01       |             ADC   #1                   ;CONVERT BIT TO DRIVE NUMBER
+  181 |  1 online.s    168 | Code        | 11 |         |    3 | 00/20BA : 8D AD 22    |             STA   DRIVENUM             ;STORE THE RESULT
+  182 |  1 online.s    169 | Comment     | 11 |         |    0 | 00/20BD               | *
+  183 |  1 online.s    170 | Comment     | 11 |         |    0 | 00/20BD               | * FIND SLOT NUMBER
+  184 |  1 online.s    171 | Comment     | 11 |         |    0 | 00/20BD               | *
+  185 |  1 online.s    172 | Code        | 11 |         |    2 | 00/20BD : A0 00       |             LDY   #0                   ;SETUP FOR NEXT OP
+  186 |  1 online.s    173 | Code        | 11 |         |    2 | 00/20BF : B1 06       |             LDA   ({6}),Y              ;LOAD FIRST BYTE INTO ACCUM
+  187 |  1 online.s    174 | Code        | 11 |         |    2 | 00/20C1 : 29 70       |             AND   #%01110000           ;FOCUS ON BITS 4,5, AND 6
+  188 |  1 online.s    175 | Code        | 11 |         |    1 | 00/20C3 : 4A          |             LSR                        ;SHIFT BITS TO THE RIGHT
+  189 |  1 online.s    176 | Code        | 11 |         |    1 | 00/20C4 : 4A          |             LSR                        ;DO IT AGAIN
+  190 |  1 online.s    177 | Code        | 11 |         |    1 | 00/20C5 : 4A          |             LSR                        ;DO IT AGAIN
+  191 |  1 online.s    178 | Code        | 11 |         |    1 | 00/20C6 : 4A          |             LSR                        ;DO IT AGAIN
+  192 |  1 online.s    179 | Code        | 11 |         |    3 | 00/20C7 : 8D AE 22    |             STA   SLOTNUM              ;BITS 0,1,2 NOW SPECIFY SLOT NUM
+  193 |  1 online.s    180 | Comment     | 11 |         |    0 | 00/20CA               | *
+  194 |  1 online.s    181 | Comment     | 11 |         |    0 | 00/20CA               | * FIND VOLUME NAME LENGTH
+  195 |  1 online.s    182 | Comment     | 11 |         |    0 | 00/20CA               | *
+  196 |  1 online.s    183 | Code        | 11 |         |    2 | 00/20CA : A0 00       |             LDY   #0                   ;SETUP FOR NEXT OP
+  197 |  1 online.s    184 | Code        | 11 |         |    2 | 00/20CC : B1 06       |             LDA   ({6}),Y              ;LOAD FIRST BYTE OF REC INTO A
+  198 |  1 online.s    185 | Code        | 11 |         |    2 | 00/20CE : 29 0F       |             AND   #%00001111           ;FOCUS ON LOWER 4 BITS
+  199 |  1 online.s    186 | Code        | 11 |         |    3 | 00/20D0 : 8D AF 22    |             STA   NAMELEN              ;STORE THE RESULT
+  200 |  1 online.s    187 | Empty       | 11 |         |    0 | 00/20D3               |                                        
+  201 |  1 online.s    188 | Directive   | 11 |         |    0 | 00/20D3               |             DO    {0}                  
+  202 |  1 online.s    193 | Directive   | 11 |         |    0 | 00/20D3               |             FIN                        
+  203 |  1 online.s    194 | Comment     | 11 |         |    0 | 00/20D3               | *
+  204 |  1 online.s    195 | Comment     | 11 |         |    0 | 00/20D3               | * PRINT SLOT AND DRIVE
+  205 |  1 online.s    196 | Comment     | 11 |         |    0 | 00/20D3               | *
+  206 |  1 online.s    197 | Empty       | 11 |         |    0 | 00/20D3               | PRTSLOT                                
+  207 |  1 online.s    198 | Code        | 11 |         |    2 | 00/20D3 : A9 D3       |             LDA   #"S"                 ;AN 'S' WITH HIGH BIT SET
+  208 |  1 online.s    199 | Code        | 11 |         |    3 | 00/20D5 : 20 ED FD    |             JSR   {$FDED}              ;WRITE 'S'
+  209 |  1 online.s    200 | Code        | 11 |         |    3 | 00/20D8 : AD AE 22    |             LDA   SLOTNUM              ;PUT SLOT NUM IN ACCUMULATOR
+  210 |  1 online.s    201 | Code        | 11 |         |    1 | 00/20DB : 18          |             CLC                        ;CLEAR CARRY FLAG FOR ADDITION
+  211 |  1 online.s    202 | Code        | 11 |         |    2 | 00/20DC : 69 B0       |             ADC   #$B0                 ;CONVERT TO ASCII & SET HI BIT
+  212 |  1 online.s    203 | Code        | 11 |         |    3 | 00/20DE : 20 ED FD    |             JSR   {$FDED}              ;PRINT SLOTNUM
+  213 |  1 online.s    204 | Code        | 11 |         |    2 | 00/20E1 : A9 AC       |             LDA   #$AC                 ;COMMA WITH HIGH BIT SET
+  214 |  1 online.s    205 | Code        | 11 |         |    3 | 00/20E3 : 20 ED FD    |             JSR   {$FDED}              ;WRITE COMMA
+  215 |  1 online.s    206 | Code        | 11 |         |    2 | 00/20E6 : A9 C4       |             LDA   #"D"                 ;A 'D' WITH HIGH BIT SET
+  216 |  1 online.s    207 | Code        | 11 |         |    3 | 00/20E8 : 20 ED FD    |             JSR   {$FDED}              ;WRITE 'D'
+  217 |  1 online.s    208 | Code        | 11 |         |    3 | 00/20EB : AD AD 22    |             LDA   DRIVENUM             ;PUT DRIVE NUM IN ACCUMULATOR
+  218 |  1 online.s    209 | Code        | 11 |         |    1 | 00/20EE : 18          |             CLC                        ;CLEAR CARRY FLAG FOR ADDITION
+  219 |  1 online.s    210 | Code        | 11 |         |    2 | 00/20EF : 69 B0       |             ADC   #$B0                 ;CONVERT TO ASCII & SET HI BIT
+  220 |  1 online.s    211 | Code        | 11 |         |    3 | 00/20F1 : 20 ED FD    |             JSR   {$FDED}              ;WRITE DRIVENUM CHARACTER
+  221 |  1 online.s    212 | Code        | 11 |         |    2 | 00/20F4 : A9 A0       |             LDA   #" "                 ;SPACE WITH HIGH BIT SET
+  222 |  1 online.s    213 | Code        | 11 |         |    3 | 00/20F6 : 20 ED FD    |             JSR   {$FDED}              ;WRITE SPACE CHARACTER
+  223 |  1 online.s    214 | Comment     | 11 |         |    0 | 00/20F9               | *
+  224 |  1 online.s    215 | Comment     | 11 |         |    0 | 00/20F9               | * CHECK FOR EMPTY VOLUME NAME
+  225 |  1 online.s    216 | Comment     | 11 |         |    0 | 00/20F9               | *
+  226 |  1 online.s    217 | Code        | 11 |         |    2 | 00/20F9 : A0 00       |             LDY   #0                   
+  227 |  1 online.s    218 | Code        | 11 |         |    3 | 00/20FB : CC AF 22    |             CPY   NAMELEN              ;CHECK FOR EMPTY NAME
+  228 |  1 online.s    219 | Code        | 11 |         |    2 | 00/20FE : D0 0C       |             BNE   WRITEVOL             ;CONTINUE IF IT IS NOT EMPTY
+  229 |  1 online.s    220 | Code        | 11 |         |    1 | 00/2100 : C8          |             INY                        ;MOVE INDEX TO LOC OF ERROR CODE
+  230 |  1 online.s    221 | Code        | 11 |         |    2 | 00/2101 : B1 06       |             LDA   ({6}),Y              ;LOAD THE ERROR CODE
+  231 |  1 online.s    222 | Code        | 11 |         |    3 | 00/2103 : 20 42 21    |             JSR   WRITEERR             
+  232 |  1 online.s    223 | Code        | 11 |         |    3 | 00/2106 : 20 8E FD    |             JSR   {$FD8E}              
+  233 |  1 online.s    224 | Code        | 11 |         |    3 | 00/2109 : 4C 26 21    |             JMP   INCREC               
+  234 |  1 online.s    225 | Comment     | 11 |         |    0 | 00/210C               | *
+  235 |  1 online.s    226 | Comment     | 11 |         |    0 | 00/210C               | * PRINT THE VOLUME NAME
+  236 |  1 online.s    227 | Comment     | 11 |         |    0 | 00/210C               | *
+  237 |  1 online.s    228 | Code        | 11 |         |    2 | 00/210C : A9 AF       | WRITEVOL    LDA   #"/"                 ;SLASH WITH HIGH BIT SET
+  238 |  1 online.s    229 | Code        | 11 |         |    3 | 00/210E : 20 ED FD    |             JSR   {$FDED}              ;WRITE SLASH CHARACTER
+  239 |  1 online.s    230 | Code        | 11 |         |    2 | 00/2111 : A0 01       |             LDY   #1                   ;SET INDEX TO FIRST CHAR OF NAME
+  240 |  1 online.s    231 | Code        | 11 |         |    2 | 00/2113 : B1 06       | _NEXTCHR    LDA   ({6}),Y              ;LOAD CHAR INTO ACCUMULATOR
+  241 |  1 online.s    232 | Code        | 11 |         |    2 | 00/2115 : 09 80       |             ORA   #%10000000           ;TURN ON THE HIGH BIT FOR PRINT
+  242 |  1 online.s    233 | Code        | 11 |         |    3 | 00/2117 : 20 ED FD    |             JSR   {$FDED}              ;WRITE A CHARACTER OF VOL NAME
+  243 |  1 online.s    234 | Code        | 11 |         |    3 | 00/211A : CC AF 22    |             CPY   NAMELEN              ;CHECK IF LAST CHARACTER
+  244 |  1 online.s    235 | Code        | 11 |         |    2 | 00/211D : F0 04       |             BEQ   _DONEVOL             ;EXIT LOOP IF DONE
+  245 |  1 online.s    236 | Code        | 11 |         |    1 | 00/211F : C8          |             INY                        ;INCREMENT Y REGISTER
+  246 |  1 online.s    237 | Code        | 11 |         |    3 | 00/2120 : 4C 13 21    |             JMP   _NEXTCHR             ;LOOP TO NEXT CHARACTER
+  247 |  1 online.s    238 | Code        | 11 |         |    3 | 00/2123 : 20 8E FD    | _DONEVOL    JSR   {$FD8E}              ;WRITE A CARRIAGE RETURN
+  248 |  1 online.s    239 | Comment     | 11 |         |    0 | 00/2126               | *
+  249 |  1 online.s    240 | Comment     | 11 |         |    0 | 00/2126               | * BOTTOM OF RECLOOP
+  250 |  1 online.s    241 | Comment     | 11 |         |    0 | 00/2126               | *
+  251 |  1 online.s    242 | Code        | 11 |         |    3 | 00/2126 : EE B0 22    | INCREC      INC   RECNUM               ;INCREMENT CURRENT RECORD NUM
+  252 |  1 online.s    243 | Comment     | 11 |         |    0 | 00/2129               | *
+  253 |  1 online.s    244 | Comment     | 11 |         |    0 | 00/2129               | * ADD 16 TO THE ADDRESS IN BUFPTR
+  254 |  1 online.s    245 | Comment     | 11 |         |    0 | 00/2129               | *
+  255 |  1 online.s    246 | Code        | 11 |         |    2 | 00/2129 : A5 06       |             LDA   {6}                  ;LOAD THE LOW BYTE OF BUFPTR
+  256 |  1 online.s    247 | Code        | 11 |         |    1 | 00/212B : 18          |             CLC                        ;CLEAR CARRY BIT IN PREP FOR ADD
+  257 |  1 online.s    248 | Code        | 11 |         |    2 | 00/212C : 69 10       |             ADC   #{$10}               ;ADD RECLEN TO LOW BYTE
+  258 |  1 online.s    249 | Code        | 11 |         |    2 | 00/212E : 85 06       |             STA   {6}                  ;STORE CALCULATED LOW BYTE
+  259 |  1 online.s    250 | Code        | 11 |         |    2 | 00/2130 : 90 02       |             BCC   _NOCARRY             ;IF CARRY NOT SET THEN NEXT REC
+  260 |  1 online.s    251 | Code        | 11 |         |    2 | 00/2132 : E6 07       |             INC   {6}+1                ;INC HIGH BYTE IF CARRY WAS SET
+  261 |  1 online.s    252 | Empty       | 11 |         |    0 | 00/2134               | _NOCARRY                               
+  262 |  1 online.s    253 | Directive   | 11 |         |    0 | 00/2134               |             DO    {0}                  
+  263 |  1 online.s    255 | Directive   | 11 |         |    0 | 00/2134               |             FIN                        
+  264 |  1 online.s    256 | Empty       | 11 |         |    0 | 00/2134               |                                        
+  265 |  1 online.s    257 | Code        | 11 |         |    3 | 00/2134 : 4C 95 20    |             JMP   RECLOOP              ;LOOP TO NEXT RECORD
+  266 |  1 online.s    258 | Empty       | 11 |         |    0 | 00/2137               | ENDPROG                                
+  267 |  1 online.s    259 | Code        | 11 |         |    1 | 00/2137 : 60          |             RTS                        ;RETURN TO WHATEVER CALLED PROG
+  268 |  1 online.s    260 | Comment     | 11 |         |    0 | 00/2138               | *
+  269 |  1 online.s    261 | Comment     | 11 |         |    0 | 00/2138               | * ERROR HANDLER
+  270 |  1 online.s    262 | Comment     | 11 |         |    0 | 00/2138               | *
+  271 |  1 online.s    263 | Empty       | 11 |         |    0 | 00/2138               | ERROR                                  
+  272 |  1 online.s    264 | Code        | 11 |         |    3 | 00/2138 : 20 42 21    |             JSR   WRITEERR             
+  273 |  1 online.s    265 | Code        | 11 |         |    3 | 00/213B : 20 3A FF    |             JSR   {$FF3A}              ;BEEP
+  274 |  1 online.s    266 | Code        | 11 |         |    3 | 00/213E : 20 8E FD    |             JSR   {$FD8E}              ;WRITE CARRIAGE RETURN
+  275 |  1 online.s    267 | Code        | 11 |         |    1 | 00/2141 : 60          |             RTS                        ;RETURN TO WHATEVER CALL PROGRAM
+  276 |  1 online.s    268 | Empty       | 11 |         |    0 | 00/2142               |                                        
+  277 |  1 online.s    269 | Comment     | 11 |         |    0 | 00/2142               | ********************************
+  278 |  1 online.s    270 | Comment     | 11 |         |    0 | 00/2142               | *                              *
+  279 |  1 online.s    271 | Comment     | 11 |         |    0 | 00/2142               | * SUB WRITEERR                 *
+  280 |  1 online.s    272 | Comment     | 11 |         |    0 | 00/2142               | * ERROR CODE MUST BE IN ACCUM  *
+  281 |  1 online.s    273 | Comment     | 11 |         |    0 | 00/2142               | *                              *
+  282 |  1 online.s    274 | Comment     | 11 |         |    0 | 00/2142               | ********************************
+  283 |  1 online.s    275 | Empty       | 11 |         |    0 | 00/2142               |                                        
+  284 |  1 online.s    276 | Empty       | 11 |         |    0 | 00/2142               | WRITEERR                               
+  285 |  1 online.s    277 | Code        | 11 |         |    3 | 00/2142 : 8D B1 22    |             STA   ERRCODE              
+  286 |  1 online.s    278 | Code        | 11 |         |    2 | 00/2145 : A2 00       |             LDX   #0                   
+  287 |  1 online.s    279 | Code        | 11 |         |    2 | 00/2147 : A0 00       |             LDY   #0                   
+  288 |  1 online.s    280 | Empty       | 11 |         |    0 | 00/2149               |                                        
+  289 |  1 online.s    281 | Empty       | 11 |         |    0 | 00/2149               | _NEXTERR                               
+  290 |  1 online.s    282 | Directive   | 11 |         |    0 | 00/2149               |             DO    {0}                  
+  291 |  1 online.s    287 | Directive   | 11 |         |    0 | 00/2149               |             FIN                        
+  292 |  1 online.s    288 | Empty       | 11 |         |    0 | 00/2149               |                                        
+  293 |  1 online.s    289 | Code        | 11 |         |    3 | 00/2149 : AD B1 22    |             LDA   ERRCODE              
+  294 |  1 online.s    290 | Code        | 11 |         |    3 | 00/214C : DD C7 23    |             CMP   ERRCODES,X           
+  295 |  1 online.s    291 | Code        | 11 |         |    2 | 00/214F : F0 2F       |             BEQ   _FOUND               
+  296 |  1 online.s    292 | Code        | 11 |         |    1 | 00/2151 : E8          |             INX                        
+  297 |  1 online.s    293 | Code        | 11 |         |    1 | 00/2152 : C8          |             INY                        
+  298 |  1 online.s    294 | Code        | 11 |         |    1 | 00/2153 : C8          |             INY                        
+  299 |  1 online.s    295 | Code        | 11 |         |    3 | 00/2154 : EC FB 22    |             CPX   ERRCOUNT             
+  300 |  1 online.s    296 | Code        | 11 |         |    2 | 00/2157 : 30 F0       |             BMI   _NEXTERR             
+  301 |  1 online.s    297 | Empty       | 11 |         |    0 | 00/2159               |                                        
+  302 |  1 online.s    298 | Comment     | 11 |         |    0 | 00/2159               | * UNKNOWN ERROR CODE
+  303 |  1 online.s    299 | Code        | 11 |         |    2 | 00/2159 : A9 A8       |             LDA   #"("                 
+  304 |  1 online.s    300 | Code        | 11 |         |    3 | 00/215B : 20 ED FD    |             JSR   {$FDED}              
+  305 |  1 online.s    301 | Macro       | 11 |         |    0 | 00/215E               |             PUTS  UNKECODE             
+  306 |  1 online.s    301 | Code        | 11 |         |    1 | 00/215E : 98          |             TYA                        ;PRESERVE Y
+  307 |  1 online.s    301 | Code        | 11 |         |    1 | 00/215F : 48          |             PHA                        
+  308 |  1 online.s    301 | Code        | 11 |         |    2 | 00/2160 : A0 00       |             LDY   #0                   ;PREPARE LOOP INDEX
+  309 |  1 online.s    301 | Code        | 11 |         |    3 | 00/2162 : B9 E6 22    | ozunid_12   LDA   UNKECODE,Y           ;LOAD A CHARACTER
+  310 |  1 online.s    301 | Code        | 11 |         |    2 | 00/2165 : C9 00       |             CMP   #0                   ;CHECK FOR END OF STRING
+  311 |  1 online.s    301 | Code        | 11 |         |    2 | 00/2167 : F0 07       |             BEQ   ozunid_13            
+  312 |  1 online.s    301 | Code        | 11 |         |    3 | 00/2169 : 20 ED FD    |             JSR   {$FDED}              
+  313 |  1 online.s    301 | Code        | 11 |         |    1 | 00/216C : C8          |             INY                        
+  314 |  1 online.s    301 | Code        | 11 |         |    3 | 00/216D : 4C 62 21    |             JMP   ozunid_12            
+  315 |  1 online.s    301 | Code        | 11 |         |    1 | 00/2170 : 68          | ozunid_13   PLA                        ;RESTORE Y
+  316 |  1 online.s    301 | Code        | 11 |         |    1 | 00/2171 : A8          |             TAY                        
+  317 |  1 online.s    302 | Code        | 11 |         |    3 | 00/2172 : AD B1 22    |             LDA   ERRCODE              
+  318 |  1 online.s    303 | Code        | 11 |         |    3 | 00/2175 : 20 DA FD    |             JSR   {$FDDA}              
+  319 |  1 online.s    304 | Code        | 11 |         |    2 | 00/2178 : A9 A9       |             LDA   #")"                 
+  320 |  1 online.s    305 | Code        | 11 |         |    3 | 00/217A : 20 ED FD    |             JSR   {$FDED}              
+  321 |  1 online.s    306 | Code        | 11 |         |    3 | 00/217D : 4C A8 21    |             JMP   _ENDSUB              
+  322 |  1 online.s    307 | Empty       | 11 |         |    0 | 00/2180               |                                        
+  323 |  1 online.s    308 | Code        | 11 |         |    3 | 00/2180 : B9 D0 23    | _FOUND      LDA   ERRMSGS,Y            ;LOAD A WITH LOW BYTE OF MSG
+  324 |  1 online.s    309 | Code        | 11 |         |    2 | 00/2183 : 85 08       |             STA   {8}                  ;STORE LOW BYTE INTO LOCAL
+  325 |  1 online.s    310 | Code        | 11 |         |    1 | 00/2185 : C8          |             INY                        ;ADVANCE TO HIGH BYTE
+  326 |  1 online.s    311 | Code        | 11 |         |    3 | 00/2186 : B9 D0 23    |             LDA   ERRMSGS,Y            ;LOAD A WITH HIGH BYTE OF MSG
+  327 |  1 online.s    312 | Code        | 11 |         |    2 | 00/2189 : 85 09       |             STA   {8}+1                ;STORE HIGH BYTE INTO LOCAL
+  328 |  1 online.s    313 | Empty       | 11 |         |    0 | 00/218B               |                                        
+  329 |  1 online.s    314 | Directive   | 11 |         |    0 | 00/218B               |             DO    {0}                  
+  330 |  1 online.s    319 | Directive   | 11 |         |    0 | 00/218B               |             FIN                        
+  331 |  1 online.s    320 | Empty       | 11 |         |    0 | 00/218B               |                                        
+  332 |  1 online.s    321 | Code        | 11 |         |    2 | 00/218B : A9 A8       |             LDA   #"("                 
+  333 |  1 online.s    322 | Code        | 11 |         |    3 | 00/218D : 20 ED FD    |             JSR   {$FDED}              
+  334 |  1 online.s    323 | Macro       | 11 |         |    0 | 00/2190               |             PUTS  ({8})                ;WRITE THE ERROR MESSAGE
+  335 |  1 online.s    323 | Code        | 11 |         |    1 | 00/2190 : 98          |             TYA                        ;PRESERVE Y
+  336 |  1 online.s    323 | Code        | 11 |         |    1 | 00/2191 : 48          |             PHA                        
+  337 |  1 online.s    323 | Code        | 11 |         |    2 | 00/2192 : A0 00       |             LDY   #0                   ;PREPARE LOOP INDEX
+  338 |  1 online.s    323 | Code        | 11 |         |    2 | 00/2194 : B1 08       | ozunid_14   LDA   ({8}),Y              ;LOAD A CHARACTER
+  339 |  1 online.s    323 | Code        | 11 |         |    2 | 00/2196 : C9 00       |             CMP   #0                   ;CHECK FOR END OF STRING
+  340 |  1 online.s    323 | Code        | 11 |         |    2 | 00/2198 : F0 07       |             BEQ   ozunid_15            
+  341 |  1 online.s    323 | Code        | 11 |         |    3 | 00/219A : 20 ED FD    |             JSR   {$FDED}              
+  342 |  1 online.s    323 | Code        | 11 |         |    1 | 00/219D : C8          |             INY                        
+  343 |  1 online.s    323 | Code        | 11 |         |    3 | 00/219E : 4C 94 21    |             JMP   ozunid_14            
+  344 |  1 online.s    323 | Code        | 11 |         |    1 | 00/21A1 : 68          | ozunid_15   PLA                        ;RESTORE Y
+  345 |  1 online.s    323 | Code        | 11 |         |    1 | 00/21A2 : A8          |             TAY                        
+  346 |  1 online.s    324 | Code        | 11 |         |    2 | 00/21A3 : A9 A9       |             LDA   #")"                 
+  347 |  1 online.s    325 | Code        | 11 |         |    3 | 00/21A5 : 20 ED FD    |             JSR   {$FDED}              
+  348 |  1 online.s    326 | Empty       | 11 |         |    0 | 00/21A8               |                                        
+  349 |  1 online.s    327 | Code        | 11 |         |    1 | 00/21A8 : 60          | _ENDSUB     RTS                        
+  350 |  1 online.s    328 | Empty       | 11 |         |    0 | 00/21A9               |                                        
+  351 |  1 online.s    329 | Comment     | 11 |         |    0 | 00/21A9               | ********************************
+  352 |  1 online.s    330 | Comment     | 11 |         |    0 | 00/21A9               | *                              *
+  353 |  1 online.s    331 | Comment     | 11 |         |    0 | 00/21A9               | * VARIABLES                    *
+  354 |  1 online.s    332 | Comment     | 11 |         |    0 | 00/21A9               | *                              *
+  355 |  1 online.s    333 | Comment     | 11 |         |    0 | 00/21A9               | ********************************
+  356 |  1 online.s    334 | Empty       | 11 |         |    0 | 00/21A9               |                                        
+  357 |  1 online.s    335 | Data        | 11 |         |  256 | 00/21A9 : 00 00 00 00 | BUFFER      DS    256                  ;SPACE FOR 16 DISK VOL RECORDS
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+      |                    |             |    |         |      |           00 00 00 00 |
+  358 |  1 online.s    336 | Data        | 11 |         |    1 | 00/22A9 : 02          | ONLARGS     DB    2                    ;PARAMETER COUNT
+  359 |  1 online.s    337 | Data        | 11 |         |    1 | 00/22AA : 00          |             DB    0                    ;UNIT NUMBER, 0=ALL
+  360 |  1 online.s    338 | Data        | 11 |         |    2 | 00/22AB : A9 21       |             DA    BUFFER               ;ADDRESS OF OUTPUT BUFFER
+  361 |  1 online.s    339 | Data        | 11 |         |    1 | 00/22AD : 00          | DRIVENUM    DB    0                    ;BYTE TO STORE DRIVENUM
+  362 |  1 online.s    340 | Data        | 11 |         |    1 | 00/22AE : 00          | SLOTNUM     DB    0                    ;BYTE TO STORE SLOTNUM
+  363 |  1 online.s    341 | Data        | 11 |         |    1 | 00/22AF : 00          | NAMELEN     DB    0                    ;LENGTH OF A VOLUME NAME
+  364 |  1 online.s    342 | Data        | 11 |         |    1 | 00/22B0 : 00          | RECNUM      DB    0                    ;CURRENT RECORD NUMBER
+  365 |  1 online.s    343 | Data        | 11 |         |    1 | 00/22B1 : 00          | ERRCODE     DB    0                    
+  366 |  1 online.s    344 | Data        | 11 |         |    9 | 00/22B2 : CE C1 CD C5 | DNAMELEN    ASC   "NAMELEN=",00        
+      |                    |             |    |         |      |           CC C5 CE BD |
+      |                    |             |    |         |      |           00          |
+  367 |  1 online.s    345 | Data        | 11 |         |    9 | 00/22BB : C5 D2 D2 C3 | DERRCODE    ASC   "ERRCODE=",00        
+      |                    |             |    |         |      |           CF C4 C5 BD |
+      |                    |             |    |         |      |           00          |
+  368 |  1 online.s    346 | Data        | 11 |         |    8 | 00/22C4 : CD D3 C7 C1 | DMSGADR     ASC   "MSGADR=",00         
+      |                    |             |    |         |      |           C4 D2 BD 00 |
+  369 |  1 online.s    347 | Data        | 11 |         |   26 | 00/22CC : D0 D2 C5 D3 | DPAUSE      ASC   "PRESS ANY KEY TO CONTINUE",00
+      |                    |             |    |         |      |           D3 A0 C1 CE |
+      |                    |             |    |         |      |           D9 A0 CB C5 |
+      |                    |             |    |         |      |           D9 A0 D4 CF |
+      |                    |             |    |         |      |           A0 C3 CF CE |
+      |                    |             |    |         |      |           D4 C9 CE D5 |
+      |                    |             |    |         |      |           C5 00       |
+  370 |  1 online.s    348 | Data        | 11 |         |   21 | 00/22E6 : D5 CE CB CE | UNKECODE    ASC   "UNKNOWN ERROR CODE: ",00
+      |                    |             |    |         |      |           CF D7 CE A0 |
+      |                    |             |    |         |      |           C5 D2 D2 CF |
+      |                    |             |    |         |      |           D2 A0 C3 CF |
+      |                    |             |    |         |      |           C4 C5 BA A0 |
+      |                    |             |    |         |      |           00          |
+  371 |  1 online.s    349 | Comment     | 11 |         |    0 | 00/22FB               | *
+  372 |  1 online.s    350 | Comment     | 11 |         |    0 | 00/22FB               | * ERROR MESSAGES
+  373 |  1 online.s    351 | Comment     | 11 |         |    0 | 00/22FB               | *
+  374 |  1 online.s    352 | Data        | 11 |         |    1 | 00/22FB : 09          | ERRCOUNT    DB    9                    
+  375 |  1 online.s    353 | Data        | 11 |         |   20 | 00/22FC : CE CF A0 C4 | ERR03       ASC   "NO DEVICE CONNECTED",00;Bug in AppleWin < 1.26.3.0
+      |                    |             |    |         |      |           C5 D6 C9 C3 |
+      |                    |             |    |         |      |           C5 A0 C3 CF |
+      |                    |             |    |         |      |           CE CE C5 C3 |
+      |                    |             |    |         |      |           D4 C5 C4 00 |
+  376 |  1 online.s    354 | Data        | 11 |         |   10 | 00/2310 : C9 AF CF A0 | ERR27       ASC   "I/O ERROR",00       
+      |                    |             |    |         |      |           C5 D2 D2 CF |
+      |                    |             |    |         |      |           D2 00       |
+  377 |  1 online.s    355 | Data        | 11 |         |   21 | 00/231A : C4 C5 D6 C9 | ERR28       ASC   "DEVICE NOT CONNECTED",00
+      |                    |             |    |         |      |           C3 C5 A0 CE |
+      |                    |             |    |         |      |           CF D4 A0 C3 |
+      |                    |             |    |         |      |           CF CE CE C5 |
+      |                    |             |    |         |      |           C3 D4 C5 C4 |
+      |                    |             |    |         |      |           00          |
+  378 |  1 online.s    356 | Data        | 11 |         |   45 | 00/232F : C4 C9 D3 CB | ERR2E       ASC   "DISK SWITCHED: FILE STILL OPEN ON OTHER DISK",00
+      |                    |             |    |         |      |           A0 D3 D7 C9 |
+      |                    |             |    |         |      |           D4 C3 C8 C5 |
+      |                    |             |    |         |      |           C4 BA A0 C6 |
+      |                    |             |    |         |      |           C9 CC C5 A0 |
+      |                    |             |    |         |      |           D3 D4 C9 CC |
+      |                    |             |    |         |      |           CC A0 CF D0 |
+      |                    |             |    |         |      |           C5 CE A0 CF |
+      |                    |             |    |         |      |           CE A0 CF D4 |
+      |                    |             |    |         |      |           C8 C5 D2 A0 |
+      |                    |             |    |         |      |           C4 C9 D3 CB |
+      |                    |             |    |         |      |           00          |
+  379 |  1 online.s    357 | Data        | 11 |         |   27 | 00/235C : D6 CF CC D5 | ERR45       ASC   "VOLUME DIRECTORY NOT FOUND",00
+      |                    |             |    |         |      |           CD C5 A0 C4 |
+      |                    |             |    |         |      |           C9 D2 C5 C3 |
+      |                    |             |    |         |      |           D4 CF D2 D9 |
+      |                    |             |    |         |      |           A0 CE CF D4 |
+      |                    |             |    |         |      |           A0 C6 CF D5 |
+      |                    |             |    |         |      |           CE C4 00    |
+  380 |  1 online.s    358 | Data        | 11 |         |   18 | 00/2377 : CE CF D4 A0 | ERR52       ASC   "NOT A PRODOS DISK",00
+      |                    |             |    |         |      |           C1 A0 D0 D2 |
+      |                    |             |    |         |      |           CF C4 CF D3 |
+      |                    |             |    |         |      |           A0 C4 C9 D3 |
+      |                    |             |    |         |      |           CB 00       |
+  381 |  1 online.s    359 | Data        | 11 |         |   26 | 00/2389 : D6 CF CC D5 | ERR55       ASC   "VOLUME CONTROL BLOCK FULL",00
+      |                    |             |    |         |      |           CD C5 A0 C3 |
+      |                    |             |    |         |      |           CF CE D4 D2 |
+      |                    |             |    |         |      |           CF CC A0 C2 |
+      |                    |             |    |         |      |           CC CF C3 CB |
+      |                    |             |    |         |      |           A0 C6 D5 CC |
+      |                    |             |    |         |      |           CC 00       |
+  382 |  1 online.s    360 | Data        | 11 |         |   19 | 00/23A3 : C2 C1 C4 A0 | ERR56       ASC   "BAD BUFFER ADDRESS",00
+      |                    |             |    |         |      |           C2 D5 C6 C6 |
+      |                    |             |    |         |      |           C5 D2 A0 C1 |
+      |                    |             |    |         |      |           C4 C4 D2 C5 |
+      |                    |             |    |         |      |           D3 D3 00    |
+  383 |  1 online.s    361 | Data        | 11 |         |   17 | 00/23B6 : C4 D5 D0 CC | ERR57       ASC   "DUPLICATE VOLUME",00
+      |                    |             |    |         |      |           C9 C3 C1 D4 |
+      |                    |             |    |         |      |           C5 A0 D6 CF |
+      |                    |             |    |         |      |           CC D5 CD C5 |
+      |                    |             |    |         |      |           00          |
+  384 |  1 online.s    362 | Comment     | 11 |         |    0 | 00/23C7               | *
+  385 |  1 online.s    363 | Comment     | 11 |         |    0 | 00/23C7               | * ERROR CODE TO MESSAGE TRANSLATION TABLE
+  386 |  1 online.s    364 | Comment     | 11 |         |    0 | 00/23C7               | *
+  387 |  1 online.s    365 | Empty       | 11 |         |    0 | 00/23C7               | ERRCODES                               
+  388 |  1 online.s    366 | Data        | 11 |         |    1 | 00/23C7 : 03          |             DB    $03                  ;BASIC code used improperly by AppleWin < 1.26.3
+  389 |  1 online.s    367 | Data        | 11 |         |    1 | 00/23C8 : 27          |             DB    $27                  
+  390 |  1 online.s    368 | Data        | 11 |         |    1 | 00/23C9 : 28          |             DB    $28                  
+  391 |  1 online.s    369 | Data        | 11 |         |    1 | 00/23CA : 2E          |             DB    $2E                  
+  392 |  1 online.s    370 | Data        | 11 |         |    1 | 00/23CB : 45          |             DB    $45                  
+  393 |  1 online.s    371 | Data        | 11 |         |    1 | 00/23CC : 52          |             DB    $52                  
+  394 |  1 online.s    372 | Data        | 11 |         |    1 | 00/23CD : 55          |             DB    $55                  
+  395 |  1 online.s    373 | Data        | 11 |         |    1 | 00/23CE : 56          |             DB    $56                  
+  396 |  1 online.s    374 | Data        | 11 |         |    1 | 00/23CF : 57          |             DB    $57                  
+  397 |  1 online.s    375 | Empty       | 11 |         |    0 | 00/23D0               | ERRMSGS                                
+  398 |  1 online.s    376 | Data        | 11 |         |    2 | 00/23D0 : FC 22       |             DA    ERR03                ;Bug in AppleWin < 1.26.3.0
+  399 |  1 online.s    377 | Data        | 11 |         |    2 | 00/23D2 : 10 23       |             DA    ERR27                
+  400 |  1 online.s    378 | Data        | 11 |         |    2 | 00/23D4 : 1A 23       |             DA    ERR28                
+  401 |  1 online.s    379 | Data        | 11 |         |    2 | 00/23D6 : 2F 23       |             DA    ERR2E                
+  402 |  1 online.s    380 | Data        | 11 |         |    2 | 00/23D8 : 5C 23       |             DA    ERR45                
+  403 |  1 online.s    381 | Data        | 11 |         |    2 | 00/23DA : 77 23       |             DA    ERR52                
+  404 |  1 online.s    382 | Data        | 11 |         |    2 | 00/23DC : 89 23       |             DA    ERR55                
+  405 |  1 online.s    383 | Data        | 11 |         |    2 | 00/23DE : A3 23       |             DA    ERR56                
+  406 |  1 online.s    384 | Data        | 11 |         |    2 | 00/23E0 : B6 23       |             DA    ERR57                
+  407 |  1 online.s    385 | Comment     | 11 |         |    0 | 00/23E2               | *
+  408 |  1 online.s    386 | Comment     | 11 |         |    0 | 00/23E2               | * LICENSE
+  409 |  1 online.s    387 | Comment     | 11 |         |    0 | 00/23E2               | *
+  410 |  1 online.s    388 | Data        | 11 |         |    7 | 00/23E2 : CF CE CC C9 | LICENSE0    ASC   "ONLINE",00          
+      |                    |             |    |         |      |           CE C5 00    |
+  411 |  1 online.s    389 | Data        | 11 |         |   39 | 00/23E9 : C3 EF F0 F9 | LICENSE1    ASC   "Copyright (c) 2017,2018 Bill Chatfield",00
+      |                    |             |    |         |      |           F2 E9 E7 E8 |
+      |                    |             |    |         |      |           F4 A0 A8 E3 |
+      |                    |             |    |         |      |           A9 A0 B2 B0 |
+      |                    |             |    |         |      |           B1 B7 AC B2 |
+      |                    |             |    |         |      |           B0 B1 B8 A0 |
+      |                    |             |    |         |      |           C2 E9 EC EC |
+      |                    |             |    |         |      |           A0 C3 E8 E1 |
+      |                    |             |    |         |      |           F4 E6 E9 E5 |
+      |                    |             |    |         |      |           EC E4 00    |
+  412 |  1 online.s    390 | Data        | 11 |         |   28 | 00/2410 : C4 E9 F3 F4 | LICENSE2    ASC   "Distributed under the GPLv2",00
+      |                    |             |    |         |      |           F2 E9 E2 F5 |
+      |                    |             |    |         |      |           F4 E5 E4 A0 |
+      |                    |             |    |         |      |           F5 EE E4 E5 |
+      |                    |             |    |         |      |           F2 A0 F4 E8 |
+      |                    |             |    |         |      |           E5 A0 C7 D0 |
+      |                    |             |    |         |      |           CC F6 B2 00 |
+  413 |  1 online.s    391 | Data        | 11 |         |   35 | 00/242C : E8 F4 F4 F0 | LICENSE3    ASC   "https://github.com/gungwald/online",00
+      |                    |             |    |         |      |           F3 BA AF AF |
+      |                    |             |    |         |      |           E7 E9 F4 E8 |
+      |                    |             |    |         |      |           F5 E2 AE E3 |
+      |                    |             |    |         |      |           EF ED AF E7 |
+      |                    |             |    |         |      |           F5 EE E7 F7 |
+      |                    |             |    |         |      |           E1 EC E4 AF |
+      |                    |             |    |         |      |           EF EE EC E9 |
+      |                    |             |    |         |      |           EE E5 00    |
+  414 |  1 online.s    392 | Comment     | 11 |         |    0 | 00/244F               | *
+  415 |  1 online.s    393 | Comment     | 11 |         |    0 | 00/244F               | * VERSION
+  416 |  1 online.s    394 | Comment     | 11 |         |    0 | 00/244F               | *
+  417 |  1 online.s    395 | Data        | 11 |         |   14 | 00/244F : CF CE CC C9 | VERSION     ASC   "ONLINE v1.0.1",00   
+      |                    |             |    |         |      |           CE C5 A0 F6 |
+      |                    |             |    |         |      |           B1 AE B0 AE |
+      |                    |             |    |         |      |           B1 00       |
+  418 |  1 online.s    396 | Empty       | 11 |         |    0 | 00/245D               |                                        
+  419 |  1 online.s    397 | Empty       | 11 |         |    0 | 00/245D               |                                        
+------+--------------------+-------------+----+---------+------+-----------------------+-------------------------------------------------------------------
