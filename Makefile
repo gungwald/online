@@ -36,12 +36,15 @@ DSK=$(PGM).dsk
 # disk instead.
 #$(AC) -pro140 $(DSK) $(VOL)
 
-$(DSK): $(PGM)
+$(DSK): $(PGM) $(PGM).ver.bas $(PGM).gui.bas
 	$(COPY) $(BASE_DSK) $(DSK)
 	# Does not work on older AC
 	#$(AC) -n $(DSK) $(VOL)
-	$(AC) -p $(DSK) $(PGM) SYS < $(PGM)
-	cat $(PGM).ver.bas | tr '\n' '\r' | $(AC) -p $(DSK) $(PGM).VER TXT
+	#$(AC) -p $(DSK) $(PGM) SYS < $(PGM)
+	$(AC) -p $(DSK) $(PGM) BIN 0x2000 < $(PGM)
+	$(AC) -p $(DSK) $(PGM).VER BAS < $(PGM).ver.bas
+	$(AC) -p $(DSK) $(PGM).GUI BAS < $(PGM).gui.bas
+	#cat $(PGM).ver.bas | tr '\n' '\r' | $(AC) -p $(DSK) $(PGM).VER TXT
 
 $(PGM): $(SRC)
 	$(MERLIN) $(SRC)

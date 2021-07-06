@@ -6,7 +6,8 @@
 * This program is free software; you can redistribute it and/or modify     *
 * it under the terms of the GNU General Public License as published by     *
 * the Free Software Foundation; either version 2 of the License, or        *
-* (at your option) any later version.                                      **                                                                          *
+* (at your option) any later version.                                      *
+*                                                                          *
 * This program is distributed in the hope that it will be useful,          *
 * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
@@ -18,9 +19,21 @@
 *                                                                          *
 ****************************************************************************
 
-               ORG   $2000
+****************************************************************************
+* You might want to load stuff to $803 instead. Applesoft sort of acts up  *
+* when there is anything else than a zero at location $800; plus, LIST     *
+* displays junk and may crash the system if there is machine code at $801  *
+* and $802. If you load to $803, then $800 - $802 can stay at zero, which  *
+* makes BASIC happy.                                                       *
+*                                                                          *
+* This does not apply to Integer BASIC.                                    *
+*                                                                          *
+* --                                                                       *
+* Linards Ticmanis                                                         *
+****************************************************************************
+               ORG   $2000	;This address is also in the Makefile
                DSK   online
-               TYP   $FF        ;SYSTEM TYPE
+               TYP   $06        ;$FF=SYSTEM $06=BINARY
 
 ********************************
 *                              *
@@ -123,8 +136,7 @@ PUTLICENSE
                JSR   CROUT
                RTS
 
-CALLONLINE
-               JSR   MLI        ;CALL MACHINE LANGUAGE INTERFACE
+CALLONLINE     JSR   MLI        ;CALL MACHINE LANGUAGE INTERFACE
                DB    ONLCMD     ;SPECIFY THE ON_LINE SYSTEM CALL
                DA    ONLARGS    ;SPECIFY ADDRESS OF ARGUMENTS
                BEQ   CONTINUE   ;ON_LINE RETURNS 0 ON SUCCESS
