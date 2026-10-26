@@ -24,3 +24,6 @@ See the [releases](https://github.com/gungwald/online/releases) page for a disk 
 * [Javer](http://www.java.com) - to run AppleCommander which builds a disk image
 #### Process
 Type "make".
+
+# License
+Online is free software, licensed under the GNU General Public License version 3 or (at your option) any later version. See [LICENSE](LICENSE).
