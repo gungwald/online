@@ -403,5 +403,5 @@ LICENSE3 ASC "https://github.com/gungwald/online",00
 *
 * VERSION
 *
-VERSION  ASC "ONLINE v1.0.1",00
+VERSION  ASC "ONLINE v1.0.2",00
 
